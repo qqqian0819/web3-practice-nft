@@ -1,0 +1,23 @@
+{
+  "name": "web3-practice-nft",
+  "version": "1.0.0",
+  "author": "qqqian0819",
+  "keywords": [
+    "ethereum",
+    "web3",
+    "nft",
+    "qqqian0819"
+  ],
+  "scripts": {
+    "client": "",
+    "hardhat": "",
+    "start": ""
+  },
+  "workspaces": {
+    "packages": [
+      "packages/*"
+    ]
+  },
+  "private": true,
+  "license": "MIT"
+}
