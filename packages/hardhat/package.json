@@ -1,8 +1,9 @@
 {
   "name": "@web3-practice-nft/hardhat",
   "scripts": {
-    "chain": "npx hardhat node",
-    "deploy": "npx hardhat run --network localhost scripts/deploy.ts"
+    "chain": "npx hardhat node --network hardhat --no-deploy",
+    "deploy:script": "npx hardhat run --network localhost scripts/deploy.ts",
+    "deploy": "npx hardhat deploy --network localhost --export-all ../react-app/contracts/hardhat_contracts.json --show-stack-traces"
   },
   "devDependencies": {
     "@nomiclabs/hardhat-ethers": "^2.0.6",
@@ -27,6 +28,7 @@
     "ethereum-waffle": "^3.4.4",
     "ethers": "^5.6.6",
     "hardhat": "^2.9.6",
+    "hardhat-deploy": "^0.11.10",
     "hardhat-gas-reporter": "^1.0.8",
     "prettier": "^2.6.2",
     "prettier-plugin-solidity": "^1.0.0-beta.13",
@@ -35,5 +37,8 @@
     "ts-node": "^10.7.0",
     "typechain": "^5.2.0",
     "typescript": "^4.6.4"
+  },
+  "dependencies": {
+    "@openzeppelin/contracts": "^4.6.0"
   }
 }

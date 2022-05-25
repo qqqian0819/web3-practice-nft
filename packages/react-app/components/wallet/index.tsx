@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react';
 import { ethers } from "ethers";
-import { Typography } from 'antd';
+import { Button, Input, Typography } from 'antd';
 import Faucet from './faucet';
 
 const { Paragraph, Title, Text } = Typography;
+const { Search } = Input;
 
 /**
  * TODO: connent wallet, eg metaMask
@@ -14,12 +15,9 @@ const { Paragraph, Title, Text } = Typography;
 const BurnerWallet = () => {
 
   const provider = new ethers.providers.JsonRpcProvider(process.env.JSON_RPC_PROVIDER);
-
-
-  const [myAddress, setMyAddress] = useState('');
   const [signer, setSigner] = useState();
-  const [balance, setBalance] = useState('...');
 
+  const [balance, setBalance] = useState('...');
   const refresBalance = async (addr: string) => {
     if (provider._isProvider && addr) {
       const balance = await provider.getBalance(addr);
@@ -28,8 +26,8 @@ const BurnerWallet = () => {
   }
 
   // get wallet
+  const [myAddress, setMyAddress] = useState('');
   useEffect(() => {
-
     const localPrefixName = 'web3-practice-nft_address';
     const localAddress = window.localStorage.getItem(`${localPrefixName}`);
     const localAddressPK = window.localStorage.getItem(`${localPrefixName}_PK`);
@@ -63,6 +61,27 @@ const BurnerWallet = () => {
     wallet && connect();
   }, []);
 
+  const getContract = async (contractName: string) => {
+    // hardhat deploy export to this path
+    const contractListPromise = import("../../contracts/hardhat_contracts.json");
+    const deployedContracts = (await contractListPromise).default ?? {};
+    const chainId = provider._network.chainId;
+    const localContract = deployedContracts[chainId]?.[0]?.contracts?.[contractName] || {};
+    const contracts = new ethers.Contract(
+      localContract.address,
+      localContract.abi,
+      signer
+    );
+    return contracts;
+  }
+
+  // const [userName, setUserName] = useState('');
+  const createUserNft = async (userName: string) => {
+    const contracts = await getContract('User');
+    const res = await contracts.setGreeting(`Hello, ${userName}!`)
+    console.log('-------------contracts1', { greet: res, contracts, provider, signer });
+  }
+
   return (
     <div>
       <Title level={4}>钱包地址：</Title>
@@ -74,13 +93,25 @@ const BurnerWallet = () => {
         <Text strong> 等价于 </Text>
         {Number(balance) * Math.pow(10, 18)} wei
       </Paragraph>
-    
+      
       <Title level={4}>水龙头转账至本地钱包：</Title>
       <Faucet
         address={myAddress}
         provider={provider}
         onSuccess={refresBalance}
       />
+
+      <div style={{paddingTop: '20px'}}>
+        <Title level={4}>生成个人NFT：</Title>
+        <Search
+          placeholder="placeholder your name "
+          allowClear
+          defaultValue="qqqian0819"
+          enterButton="生成用户个人信息NFT"
+          size="large"
+          onSearch={createUserNft}
+        />
+      </div>
     </div>
   )
 }
