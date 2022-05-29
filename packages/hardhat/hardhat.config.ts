@@ -56,7 +56,7 @@ const config: HardhatUserConfig = {
     tokenOwner: 1,
   },
   paths: {
-    sources: 'src',
+    sources: 'contracts',
   },
 };
 

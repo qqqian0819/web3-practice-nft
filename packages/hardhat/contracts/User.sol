@@ -1,22 +1,26 @@
-//SPDX-License-Identifier: Unlicense
-pragma solidity ^0.8.0;
-
+pragma solidity ^0.8.0; 
+import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
+import "@openzeppelin/contracts/utils/Counters.sol";
 import "hardhat/console.sol";
 
-contract User {
-    string private greeting;
+/**
+ * @title about user: mintNft and avator
+ * @notice everybody cant mint own userinfo nft
+ */
+contract User is ERC721URIStorage {
+  using Counters for Counters.Counter;
+  Counters.Counter private _tokenIds;
+  
+  constructor() ERC721("UserToken", "UNFT") {
+    console.log('--------------------user123');
+  }
 
-    constructor(string memory _greeting) {
-        console.log("aaaaDeploying a Greeter with greeting:", _greeting);
-        greeting = _greeting;
-    }
-
-    function greet() public view returns (string memory) {
-        return greeting;
-    }
-
-    function setGreeting(string memory _greeting) public {
-        console.log("aaaaChanging greeting from '%s' to '%s'", greeting, _greeting);
-        greeting = _greeting;
-    }
+  // 生成用户 nft
+  function minUserNft(address addr, string memory tokenURI) public returns(uint256) {
+    uint256 newItemId = _tokenIds.current();
+    _mint(addr, newItemId);
+    _setTokenURI(newItemId, tokenURI);
+    _tokenIds.increment();
+    return newItemId;
+  }
 }
